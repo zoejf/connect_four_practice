@@ -16,23 +16,26 @@ class ConnectFour
   end
 
   def player_move(player)
-    move = nil
-    player = @current_player
-    @board.show_board
-    print "#{player.name}, choose a column (1 - 7) to place your chip."
-    move = gets.chomp.to_i - 1
-    #if place_chip was successful
-    if @board.place_chip(move, player.color)
-      #function to check for winner
-      #if there is no winner or fullboard/tie, continue...
-      change_player
-      player_move(@current_player)
+    if @board.board_full?
+      print "This game is a tie!"
     else
-      print "INVALID MOVE: That column is full. \n"
-      player_move(@current_player)
+      move = nil
+      player = @current_player
+      @board.show_board
+      print "#{player.name}, choose a column (1 - 7) to place your chip."
+      move = gets.chomp.to_i - 1
+      #if place_chip was successful
+      if @board.place_chip(move, player.color)
+        #function to check for winner
+        #if there is no winner or fullboard/tie, continue...
+        change_player
+        player_move(@current_player)
+      else
+        print "INVALID MOVE: That column is full. \n"
+        player_move(@current_player)
+      end
     end
   end
-
 
   def change_player
     if @current_player == @player1 
@@ -41,7 +44,6 @@ class ConnectFour
       @current_player = @player1
     end
   end
-
 
   #check if there is a winner: if player has made four in a row
   def check_winner
@@ -58,7 +60,7 @@ class Player
     @color = color
   end
 
-end
+end #end of Player class
 
 class Board
   def initialize
@@ -75,13 +77,12 @@ class Board
   end
 
   def show_board
-    print ""
-    print ""
+    print "\n "
     print " #{[1,2,3,4,5,6,7].join("  ")} \n"
     @board.each do |row|
       print "| #{row.join("  ")} | \n"
     end
-    print ""
+    print "\n"
     @board    
   end
 
@@ -101,6 +102,20 @@ class Board
     end
   end
 
-end
+  #checks for empty squares and returns TRUE if board is full
+  def board_full?
+    #loop through all rows and each column within it
+    @board.each do |row|
+      row.each do |col|
+        if col == @empty_square
+          #stop at first empty space found
+          return nil
+        end
+      end
+    end
+    return true
+  end
+
+end #end of Board class
 
 
