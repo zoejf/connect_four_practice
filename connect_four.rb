@@ -3,8 +3,8 @@ class ConnectFour
   def initialize
     blue = "B"
     red = "R"
-    @player1 = Player.new("Player1", blue)
-    @player2 = Player.new("Player2", red)
+    @player1 = Player.new("Player 1", blue)
+    @player2 = Player.new("Player 2", red)
     @current_player = @player1
     @board = Board.new
   end
@@ -19,13 +19,18 @@ class ConnectFour
     move = nil
     player = @current_player
     @board.show_board
-    print "Choose a column (1 - 7) to place your chip."
+    print "#{player.name}, choose a column (1 - 7) to place your chip."
     move = gets.chomp.to_i - 1
-    place_chip(move, player.color)
-    #function to check for winner
-    #if there is no winner or fullboard/tie, continue...
-    change_player
-    player_move(@current_player)
+    #if place_chip was successful
+    if @board.place_chip(move, player.color)
+      #function to check for winner
+      #if there is no winner or fullboard/tie, continue...
+      change_player
+      player_move(@current_player)
+    else
+      print "INVALID MOVE: That column is full. \n"
+      player_move(@current_player)
+    end
   end
 
 
@@ -39,7 +44,7 @@ class ConnectFour
 
 
   #check if there is a winner: if player has made four in a row
-  def winner
+  def check_winner
 
   end
 
@@ -81,14 +86,14 @@ class Board
   end
 
   def place_chip(move, color)
-    #first check if row is full
+    #first check if column is full
     if @board[0][move] != @empty_square
-      print "That row is full"
+      return nil 
     else
       row = 5
       while row >= 0
         if @board[row][move] == @empty_square
-          @board[row][move] = color
+          return @board[row][move] = color
         else
           row = row - 1
         end
@@ -97,4 +102,5 @@ class Board
   end
 
 end
+
 
