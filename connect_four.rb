@@ -24,14 +24,20 @@ class ConnectFour
       @board.show_board
       print "#{player.name}, choose a column (1 - 7) to place your chip."
       move = gets.chomp.to_i - 1
-      #if place_chip was successful
-      if @board.place_chip(move, player.color)
-        #function to check for winner
-        #if there is no winner or fullboard/tie, continue...
-        change_player
-        player_move(@current_player)
+      #if user entered valid number
+      if (move > 0) && (move <= 7)
+        #if place_chip was successful
+        if @board.place_chip(move, player.color)
+          #function to check for winner
+          #if there is no winner or fullboard/tie, continue...
+          change_player
+          player_move(@current_player)
+        else
+          print "INVALID MOVE: That column is full. \n"
+          player_move(@current_player)
+        end
       else
-        print "INVALID MOVE: That column is full. \n"
+        print "INVALID ENTRY: You must enter a number between 1 and 7"
         player_move(@current_player)
       end
     end
@@ -43,11 +49,6 @@ class ConnectFour
     else
       @current_player = @player1
     end
-  end
-
-  #check if there is a winner: if player has made four in a row
-  def check_winner
-
   end
 
 end  #end of ConnectFour class
@@ -104,7 +105,6 @@ class Board
 
   #checks for empty squares and returns TRUE if board is full
   def board_full?
-    #loop through all rows and each column within it
     @board.each do |row|
       row.each do |col|
         if col == @empty_square
@@ -114,6 +114,60 @@ class Board
       end
     end
     return true
+  end
+
+  #check if there is a winner, ie. if player has made four in a row
+  def check_winner(player, color)
+    if check_horiz(color)
+      return true
+    elsif check_vert
+      return true
+    elsif check_diag
+      return true
+    else
+      return false
+    end   
+  end
+
+  def check_horiz(player_color)
+    @board.each do |row|
+      if row.join.match("#{color * 4}")
+        return true
+      end
+    end
+  end
+
+  def check_vert(player_color)
+    index = 0
+    color = player_color
+    array.each_with_index do |row, col|
+      row.each_with_index do |item, ind|
+        if item == color
+          count = 1
+          row_index = array.index(row) + 1
+          print "row: #{row}, index: #{ind}, count: #{count}"
+          if item == @board[row_index][ind]
+            count = 2
+            row_index = row_index + 1
+            print "row: #{row}, index: #{ind}, count: #{count}"
+            if item == @board[row_index][ind]
+              count = 3
+              row_index = row_index + 1
+              print "index: #{ind}, count: #{count}"
+              if item == @board[row_index][ind]
+                  count = 4
+                  return true
+              end
+            end
+          end
+        end
+      end
+    end
+    return false
+  end
+
+  def check_diag
+    
   end
 
 end #end of Board class
